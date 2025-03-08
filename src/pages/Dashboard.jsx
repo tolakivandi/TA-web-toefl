@@ -1,5 +1,5 @@
 // Sidebar Component
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { User, BookOpen, ChevronDown } from "lucide-react";
 import Card from "../components/Card";
 import CardContent from "../components/CardContent";
@@ -9,50 +9,61 @@ import Button from "../components/Button";
 import gambar1 from "../assets/images/gambar1.png";
 import gambar2 from "../assets/images/gambar2.png";
 import { Link } from "react-router-dom";
+import { Home } from "lucide-react";
+import { History } from "lucide-react";
+import { RiLogoutBoxLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
+
+
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user"); // Hapus data user
+    navigate("/login"); // Arahkan ke halaman login
+  };
   return (
     <div className="w-64 bg-[#2E4C7A] text-white p-4">
       <h1 className="text-2xl font-bold mb-8">AppName</h1>
       <ul>
-        <li className="mb-4">
-          <button className="flex items-center w-full p-2 text-left rounded hover:bg-blue-700">
-            <span className="mr-2">🏠</span> Home
+        <li>
+          <button className="flex items-center w-full p-2 text-left rounded hover:bg-[#335A9A]">
+            <span className="mr-2 text-lg"><Home size={20}/></span> Home
           </button>
         </li>
         <li>
-          <button className="flex items-center w-full p-2 text-left rounded hover:bg-blue-700">
-            <span className="mr-2">📜</span> History
+          <button className="flex items-center w-full p-2 text-left rounded hover:bg-[#335A9A]">
+            <span className="mr-2 text-lg"><History size={20} /></span> History
           </button>
         </li>
+        <li>
+        <button onClick={handleLogout} className="flex items-center w-full p-2 text-left rounded hover:bg-[#335A9A]">
+          <span className="mr-2 text-lg"><RiLogoutBoxLine size={20} /></span> Logout
+        </button>
+        </li> 
       </ul>
     </div>
   );
 };
 
+
 // Header Component
-const Header = () => {
+const Header = ({user}) => {
   return (
-    <div>
-      <div className="flex justify-end mr-6 mb-2 items-center space-x-2">
-        <User className="w-6 h-6" />
-        <span className="text-sm font-medium">Username</span>
-        <a href="">
+    <div className="bg-gray-100 flex">
+      <div className="flex-1 p-6 flex flex-col">
+        <div className="flex justify-end mr-6 mb-2 items-center space-x-2">
+          <User className="w-6 h-6" />
+          <span className="text-sm font-medium">{user ? user.name : "Guest"}</span>
           <ChevronDown className="w-4 h-4" />
-        </a>
-      </div>
-      <div className="bg-linear-to-t from-[#24437A] to-[#A8DBFA] p-6 rounded shadow flex items-center justify-between mb-6">
-        <div className="flex w-full justify-between items-center">
+        </div>
+        <div className="bg-gradient-to-t from-[#24437A] to-[#A8DBFA] p-4 rounded-2xl shadow flex items-center justify-between mb-6">
           <img src={gambar2} alt="" />
-          <div className="flex flex-col items-center">
-            <h2 className="text-2xl font-semibold text-white">
-              Hi, Tolak Ivandi Yudistiawan
-            </h2>
-            <p className="text-xl text-white">3122522020</p>
-            <h3 className="text-lg text-white">
-              TOEFL Application for Student to Improve Their Knowledgw in
-              English
-            </h3>
+          <div className="text-center text-white">
+            <h2 className="text-2xl font-semibold">Hi, {user ? user.name : "User"}</h2>
+            <p className="text-xl">{user ? user.id : "-"}</p>
+            <h3 className="text-lg">TOEFL Application for Student to Improve Their Knowledge in English</h3>
           </div>
           <img src={gambar1} alt="" className="h-38" />
         </div>
@@ -71,14 +82,18 @@ const SimulationTest = () => {
           Try the TOEFL simulation to test your understanding
         </p>
         <div className="flex flex-col items-center">
-          <Link to={"/instruction/reading"}>
+          <Link to={"/instruction/Reading"}>
             <Button className="bg-[#A8DBFA] py-7 px-7 rounded-lg shadow-md hover:bg-[#76B7E4]">
               <div className="bg-[rgba(63,162,246,0.3)] p-6 rounded-full flex hover:bg-[rgba(63,162,246,0.5)] items-center justify-center">
                 <BookOpen className="w-12 h-12 text-white" />
               </div>
             </Button>
           </Link>
+          <div className="p-2">
+          <Link to={"/instruction/Reading"}>
           <span className="font-semibold mt-4">Start Exam</span>
+          </Link>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -173,24 +188,40 @@ const Overview = () => {
 
 // Main Dashboard Component
 const Dashboard = () => {
-  return (
-    <div className="h-screen bg-gray-100 flex">
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);  return (
+    <div className="min-h-screen bg-gray-100 flex">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-6 h-auto">
+      <div className="flex-1 p-6 flex flex-col">
         {/* Header */}
-        <Header />
+        <Header user={user}/>
 
         {/* Content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-auto">
-          <SimulationTest />
-          <Overview />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
+          {/* Simulation Test - diperlebar */}
+          <div className="col-span-2 w-full">
+            <SimulationTest />
+          </div>
+
+          {/* Overview - tetap penuh di sebelah kanan */}
+          <div className="w-full">
+            <Overview />
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+
+
+export default Dashboard; Sidebar;

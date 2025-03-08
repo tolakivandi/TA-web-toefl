@@ -1,13 +1,24 @@
 import ButtonPrimary from "@/components/ButtonPrimary";
 import Header from "@/components/Header";
 import SubHeaderInstruction from "@/components/instruction/SubHeader";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 export default function InstructionReading() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
   return (
     <>
       <div className="w-full flex flex-col px-10 pt-5 pb-7 gap-6">
-        <Header pageName={"Simulation Test"} username={"Tolak Ivandi Talka"} />
-        <SubHeaderInstruction title={"Package 1"} />
+      <Header pageName={"Simulation Test"} username={user ? user.name : "Guest"} />
+      <SubHeaderInstruction title={"Package 1"} />
         <div className="flex flex-col px-10 py-5 bg-white rounded-2xl gap-5">
           <h1 className="text-2xl font-bold">
             Instruction <span className="text-red-600 font-extrabold">!</span>
@@ -56,7 +67,9 @@ export default function InstructionReading() {
             take the exam.
           </p>
           <div className="flex justify-end">
-            <ButtonPrimary value={"next"} />
+            <Link to={"/instruction/camera"}>
+              <ButtonPrimary value={"next"} />
+            </Link>
           </div>
         </div>
       </div>
