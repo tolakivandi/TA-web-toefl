@@ -41,7 +41,7 @@ const CameraPreview = () => {
 
 // Komponen Utama
 export default function InstructionCamera() {
-  const handleStartExam = () => {
+  const handleStartExam = async () => {
     sessionStorage.setItem("startTime", Date.now().toString()); // Simpan waktu mulai
   };
 
@@ -53,6 +53,23 @@ export default function InstructionCamera() {
       setUser(JSON.parse(storedUser));
     }
   }, []);
+
+  // const handleStartExam = async () => {
+  //   try {
+  //     const response = await axios.post("https://upright-elephant-concise.ngrok-free.app/api/submit-paket/4", {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       },
+  //     });
+  //     console.log("Exam started successfully:", response.data);
+  //     alert("Exam started successfully!");
+
+  //     const [user, setUser] = useState(null);
+  //   } catch (error) {
+  //     console.error("Error starting exam:", error);
+  //     alert("Failed to start exam.");
+  //   }
+  // };
 
   return (
     <div className="h-screen flex flex-col px-10 pt-5 pb-7 gap-6 bg-gray-100">
@@ -85,7 +102,7 @@ export default function InstructionCamera() {
             </p>
             <div className="flex justify-end mt-4">
               <Link to={"/paket"} onClick={handleStartExam}>
-                <button className="bg-[#2E4C7A] text-white px-6 py-2 rounded-lg hover:bg-[#1D365D]">
+                <button className="bg-[#2b5e5e] text-white px-6 py-2 rounded-lg hover:bg-[#1D365D]">
                   Start
                 </button>
               </Link>

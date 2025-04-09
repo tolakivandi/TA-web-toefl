@@ -33,16 +33,18 @@ const Listening = () => {
       <div className="w-full bg-white p-4 text-center font-semibold border rounded-lg shadow-md">Package 1</div>
       <main className="flex flex-col px-2 py-5 bg-white rounded-2xl gap-5 shadow-md h-full">
         <div className="flex h-full w-full p-4 bg-gray-100">
-          <div className="w-2/3 bg-white p-6 shadow-lg rounded-lg">
-            <div className="bg-gray-200 p-3 rounded-md text-gray-700 text-sm">
-              Listen to a lecture about the poet Sylvia Plath to answer questions number {currentQuestion}-{totalQuestions}. Take notes as you listen. Then answer the questions correctly.
-            </div>
-            <div className="mt-4">
-              <div className="w-full bg-gray-300 h-4 rounded-md overflow-hidden">
-                <div
-                  className="h-full bg-blue-500"
-                  style={{ width: `${progress}%` }}
-                ></div>
+          <div className="w-2/3 bg-white p-6 shadow-lg rounded-lg flex flex-col justify-between">
+            <div>
+              <div className="bg-gray-200 p-3 rounded-md text-gray-700 text-sm">
+                Listen to a lecture about the poet Sylvia Plath to answer questions number {currentQuestion}-{totalQuestions}. Take notes as you listen. Then answer the questions correctly.
+              </div>
+              <div className="mt-4">
+                <div className="w-full bg-gray-300 h-4 rounded-md overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
               </div>
             </div>
             <div className="mt-6 flex justify-end">
@@ -50,10 +52,9 @@ const Listening = () => {
             </div>
           </div>
           <div className="w-1/3 ml-2 p-6 bg-white shadow-lg rounded-lg h-full flex flex-col">
-            <div className="flex justify-center items-center bg-green-100 p-2 rounded-lg mb-4">
-              <span className="text-green-700 font-semibold text-lg">
-                <BsStopwatchFill /> {formatTime(time)}
-              </span>
+            <div className="flex justify-center items-center bg-green-100 p-2 rounded-lg mb-4 gap-2">
+              <BsStopwatchFill className="text-green-700 text-lg" />
+              <span className="text-green-700 font-semibold text-lg">{formatTime(time)}</span>
             </div>
             <div className="grid grid-cols-6 gap-2 overflow-y-auto h-full max-h-[400px]">
               {Array.from({ length: totalQuestions }, (_, i) => (

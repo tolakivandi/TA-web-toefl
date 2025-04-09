@@ -5,7 +5,7 @@ import Card from "../components/Card";
 import CardContent from "../components/CardContent";
 import Progress from "../components/Progress";
 import Button from "../components/Button";
-
+import { useSelector, useDispatch } from "react-redux";
 import gambar1 from "../assets/images/gambar1.png";
 import gambar2 from "../assets/images/gambar2.png";
 import { Link } from "react-router-dom";
@@ -13,8 +13,7 @@ import { Home } from "lucide-react";
 import { History } from "lucide-react";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-
-
+import { fetchPacket } from "../redux/questionSlice";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -24,23 +23,23 @@ const Sidebar = () => {
     navigate("/login"); // Arahkan ke halaman login
   };
   return (
-    <div className="w-64 bg-[#2E4C7A] text-white p-4">
+    <div className="w-64 bg-white text-black p-4">
       <h1 className="text-2xl font-bold mb-8">AppName</h1>
       <ul>
         <li>
-          <button className="flex items-center w-full p-2 text-left rounded hover:bg-[#335A9A]">
+          <button className="flex items-center w-full p-2 text-left rounded hover:bg-[#e5e7eb]">
             <span className="mr-2 text-lg"><Home size={20}/></span> Home
           </button>
         </li>
         <li>
-          <button className="flex items-center w-full p-2 text-left rounded hover:bg-[#335A9A]">
+          <button className="flex items-center w-full p-2 text-left rounded hover:bg-[#e5e7eb]">
             <span className="mr-2 text-lg"><History size={20} /></span> History
-          </button>
+            </button>
         </li>
         <li>
-        <button onClick={handleLogout} className="flex items-center w-full p-2 text-left rounded hover:bg-[#335A9A]">
+        <button onClick={handleLogout} className="flex items-center w-full p-2 text-left rounded hover:bg-[#e5e7eb]">
           <span className="mr-2 text-lg"><RiLogoutBoxLine size={20} /></span> Logout
-        </button>
+          </button>
         </li> 
       </ul>
     </div>
@@ -58,7 +57,7 @@ const Header = ({user}) => {
           <span className="text-sm font-medium">{user ? user.name : "Guest"}</span>
           <ChevronDown className="w-4 h-4" />
         </div>
-        <div className="bg-gradient-to-t from-[#24437A] to-[#A8DBFA] p-4 rounded-2xl shadow flex items-center justify-between mb-6">
+        <div className="bg-gradient-to-t from-[#2b5e5e] to-[#a0e0df] p-4 rounded-2xl shadow flex items-center justify-between mb-6">
           <img src={gambar2} alt="" />
           <div className="text-center text-white">
             <h2 className="text-2xl font-semibold">Hi, {user ? user.name : "User"}</h2>
@@ -72,8 +71,16 @@ const Header = ({user}) => {
   );
 };
 
-// SimulationTest Component
 const SimulationTest = () => {
+  const dispatch = useDispatch();
+
+  const { packet, loading, error } = useSelector((state) => state.packet);
+  
+  useEffect(() => {
+    dispatch(fetchPacket());
+  }, [dispatch]);
+
+
   return (
     <Card className="col-span-2 h-full">
       <CardContent className={`flex flex-col items-start`}>
@@ -81,24 +88,35 @@ const SimulationTest = () => {
         <p className="text-sm text-gray-500 mb-6">
           Try the TOEFL simulation to test your understanding
         </p>
-        <div className="flex flex-col items-center">
-          <Link to={"/instruction/Reading"}>
-            <Button className="bg-[#A8DBFA] py-7 px-7 rounded-lg shadow-md hover:bg-[#76B7E4]">
-              <div className="bg-[rgba(63,162,246,0.3)] p-6 rounded-full flex hover:bg-[rgba(63,162,246,0.5)] items-center justify-center">
-                <BookOpen className="w-12 h-12 text-white" />
+
+        {loading && <p>Loading packets...</p>}
+        {error && <p className="text-red-500">Error: {error}</p>}
+
+        <div className="space-y-4 w-full">
+          {packet?.map((packet) => (
+            <div
+              key={packet.id}
+              className="border p-4 rounded-lg shadow hover:shadow-md bg-white flex items-center justify-between"
+            >
+              <div>
+                <h4 className="text-lg font-semibold">{packet.name_packet}</h4>
+                <p className="text-sm text-gray-500">
+                  Type: {packet.type_packet} • Soal: {packet.question_count} • Akurasi: {packet.akurasi}%
+                </p>
               </div>
-            </Button>
-          </Link>
-          <div className="p-2">
-          <Link to={"/instruction/Reading"}>
-          <span className="font-semibold mt-4">Start Exam</span>
-          </Link>
-          </div>
+              <Link to={`/instruction/${packet.type_packet}`}>
+                <Button className="bg-[#4a8787] hover:bg-[#3a6e6e] text-white px-4 py-2 rounded">
+                  Start
+                </Button>
+              </Link>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>
   );
 };
+
 
 // Overview Component
 const Overview = () => {
